@@ -1,48 +1,29 @@
-# coding: utf-8
-import sys
-import random
+# -*- coding: utf-8 -*-
+from random import randrange
 from datetime import datetime
-import slack
 from slack import WebClient, RTMClient
 
 token_file = './slack_token'
 
 mute_keywords = ['(mute)', 'こっそり']
 
-def get_channel_list(client):
-    channels = client.api_call('channels.list')
-    if channels['ok']:
-        return channels['channels']
-    else:
-        return None
+reply_message_format = '''\
+あら、<@%s> さん、次の指名にお困りですか？
+それなら、たとえば
+```<@%s> さん```
+に書いていただくのは、いかが？'''
 
-def get_channel_id(client, channel_name):
-    channels = filter(lambda x: x['name']==channel_name , get_channel_list(client))
-    target = None
-    for c in channels:
-        if target is not None:
-            break
-        else:
-            target = c
-    if target is None:
-        return None
-    else:
-        return target['id']
 
 def next_writer(members):
     members = list(members)
     N = len(members)
-    return members[random.randrange(N)]
+    return members[randrange(N)]
 
 def generate_reply_message(user_id, target_id):
-    message = f'あら、<@{user_id}> さん、'
-    message += '次の指名にお困りですか？\n'
-    message += 'それなら、たとえば\n'
-    message += f'```<@{target_id}> さん```\n'
-    message += 'に書いていただくのは、いかが？'
-    return message
+    return reply_message_format % (user_id, target_id)
 
-@RTMClient.run_on(event="message")
+
+@RTMClient.run_on(event='message')
 def write_advice(**payload):
     print(f'Message received at {str(datetime.now())}.')
 
@@ -84,12 +65,12 @@ def write_advice(**payload):
             'channel': channel_id,
             'text': reply_message,
             'thread_ts': thread_ts,
-            'reply_broadcast': reply_broadcast
-            }
+            'reply_broadcast': reply_broadcast,
+        }
     )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     with open(token_file, 'r') as f:
         slack_token = f.readline()
     web_client = WebClient(token=slack_token)
