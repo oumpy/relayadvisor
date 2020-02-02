@@ -22,11 +22,7 @@ def next_writer(members):
 def generate_reply_message(user_id, target_id):
     return reply_message_format % (user_id, target_id)
 
-
-@RTMClient.run_on(event='message')
-def write_advice(**payload):
-    print(f'Message received at {str(datetime.now())}.')
-
+def write_relay_advice(payload):
     data = payload['data']
     web_client = payload['web_client']
     required_fields = ['text', 'channel', 'ts', 'user']
@@ -69,6 +65,10 @@ def write_advice(**payload):
         }
     )
 
+@RTMClient.run_on(event='message')
+def respond_to_message(**payload):
+    print(f'Message received at {str(datetime.now())}.')
+    write_relay_advice(payload)
 
 if __name__ == '__main__':
     with open(token_file, 'r') as f:
