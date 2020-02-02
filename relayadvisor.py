@@ -65,10 +65,35 @@ def write_relay_advice(payload):
         }
     )
 
+def record_relay_post(payload):
+    data = payload['data']
+    web_client = payload['web_client']
+    required_fields = ['text', 'channel', 'ts', 'user']
+    for f in required_fields:
+        if f not in data.keys():
+            return
+    channel_id = data['channel']
+    text = data['text']
+    thread_ts = data['ts']
+    user = data['user']
+
+    if user == my_id: # when my own post
+        return
+    channel_info = web_client.api_call('channels.info', params={'channel':channel_id})['channel']
+    # ensure I am a member of the channel.
+    if not channel_info['is_member']:
+        return
+
+    # Write codes using google API below...
+    #
+    #
+    #
+
 @RTMClient.run_on(event='message')
 def respond_to_message(**payload):
     print(f'Message received at {str(datetime.now())}.')
     write_relay_advice(payload)
+    record_relay_post(payload)
 
 if __name__ == '__main__':
     with open(token_file, 'r') as f:
