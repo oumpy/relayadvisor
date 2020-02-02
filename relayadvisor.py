@@ -53,11 +53,11 @@ def write_advice(**payload):
         members.remove(user)
     reply_message = generate_reply_message(user, next_writer(members))
 
-    reply_broadcast = 'True'
-    for mkw in mute_keywords:
-        if mkw in text:
-            reply_broadcast = 'False'
-            break
+    reply_broadcast = 'False'
+#    for mkw in mute_keywords:
+#        if mkw in text:
+#            reply_broadcast = 'False'
+#            break
 
     web_client.api_call(
         'chat.postMessage',
