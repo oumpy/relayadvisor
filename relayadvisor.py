@@ -72,7 +72,7 @@ def write_advice(**payload):
 
 if __name__ == '__main__':
     with open(token_file, 'r') as f:
-        slack_token = f.readline()
+        slack_token = f.readline().rstrip()
     web_client = WebClient(token=slack_token)
     my_id = web_client.api_call('auth.test')['user_id']
 
