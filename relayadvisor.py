@@ -48,9 +48,9 @@ def write_advice(**payload):
         return
 
     members = set(channel_info['members'])
-    members.remove(my_id)
+    members.discard(my_id)
     if len(members) > 1:
-        members.remove(user)
+        members.discard(user)
     reply_message = generate_reply_message(user, next_writer(members))
 
     reply_broadcast = 'False'
