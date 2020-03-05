@@ -2,8 +2,10 @@
 from random import randrange
 from datetime import datetime
 from slack import WebClient, RTMClient
+import os
 
-token_file = './slack_token'
+base_dir = os.environ['HOME'] + '/var/relayadvisor/'
+token_file = 'slack_token'
 
 mute_keywords = ['(mute)', 'こっそり']
 
@@ -13,6 +15,8 @@ reply_message_format = '''\
 ```<@%s> さん```
 に書いていただくのは、いかが？'''
 
+
+token_file_path = base_dir + token_file
 
 def next_writer(members):
     members = list(members)
@@ -71,7 +75,7 @@ def write_advice(**payload):
 
 
 if __name__ == '__main__':
-    with open(token_file, 'r') as f:
+    with open(token_file_path, 'r') as f:
         slack_token = f.readline().rstrip()
     web_client = WebClient(token=slack_token)
     my_id = web_client.api_call('auth.test')['user_id']
